@@ -4,4 +4,17 @@
     - name: create user (ansible-worker)
       user:
         name: ansible-worker
-      tags: [user]
+      tags: [user, ansible-worker]
+
+    - name: install git
+      apt:
+        name: git
+        state: present
+        update_cache: yes
+
+    - name: add ssh key
+      authorized_key:
+        key: "{{ lookup('file', '../ssh_keys/id_rsa.pub') }}"
+        user: ansible-worker
+      tags: [ssh, ansible-worker]
+
