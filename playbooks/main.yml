@@ -11,6 +11,7 @@
         name: git
         state: present
         update_cache: yes
+      tags: [git]
 
     - name: add ssh key
       authorized_key:
@@ -18,3 +19,49 @@
         user: ansible-worker
       tags: [ssh, ansible-worker]
 
+    - name: create www dir
+      file:
+        path: /home/ansible-worker/www
+        state: directory
+
+    - name: git clone repo
+      git:
+        repo: https://github.com/iphilka/stud-template.git
+        dest: /home/ansible-worker/www/stud-template
+        force: yes
+      
+    - name: update index.html
+      template:
+        src: ../templates/index.html.j2
+        dest: /home/ansible-worker/www/stud-template/index.html
+
+    - name: install nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+      
+    - name: remove default nginx config
+      file:
+        path: /etc/nginx/sites-available/default
+        state: absent
+
+    - name: remove default link
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Create symlink
+      file: 
+        src: /etc/nginx/sites-available/ansible.iphilka.ru.conf
+        dest: /etc/nginx/sites-enabled/ansible.iphilka.ru
+        state: link
+      notify:
+        - restart nginx
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: reloaded
+  

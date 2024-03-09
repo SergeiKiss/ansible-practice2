@@ -1,5 +1,5 @@
 ping:
-	ansible all -i inventory.ini -m ping
+	ansible all -i hosts.ini -m ping
 
 setup:
-	ansible-playbook playbooks/main.yml -i inventory.ini
+	ansible-playbook playbooks/main.yml -i hosts.ini
