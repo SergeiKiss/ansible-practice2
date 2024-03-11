@@ -40,26 +40,24 @@
         name: nginx
         state: present
         update_cache: yes
-      
-    - name: remove default nginx config
-      file:
-        path: /etc/nginx/sites-available/default
-        state: absent
 
-    - name: remove default link
-      file:
-        path: /etc/nginx/sites-enabled/default
-        state: absent
+    - name: add nginx config
+      template:
+        src: ../templates/ansible.iphilka.ru.conf.j2
+        dest: /etc/nginx/sites-available/ansible.iphilka.ru.conf
 
-    - name: Create symlink
+    - name: create symlink
       file: 
         src: /etc/nginx/sites-available/ansible.iphilka.ru.conf
         dest: /etc/nginx/sites-enabled/ansible.iphilka.ru
         state: link
-      notify:
-        - restart nginx
 
-  handlers:
+    - name: access
+      file:
+        path: /home/ansible-worker
+        mode: '777'
+        recurse: yes
+      
     - name: restart nginx
       service:
         name: nginx

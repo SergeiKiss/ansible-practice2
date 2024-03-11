@@ -1,10 +1,9 @@
-events {
+server {
+    listen 80;
+    server_name ansible.iphilka.ru;
 
-}
-
-http {
-  server {
-    listen 80 default_server;
-    return /home/ansible-worker/www/stud-template/index.html;
-  }
+    location / {
+        root /home/ansible-worker/www/stud-template;
+        index index.html;
+    }
 }
